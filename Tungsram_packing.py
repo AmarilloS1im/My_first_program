@@ -5,20 +5,21 @@ from pdfminer.high_level import extract_text
 
 
 def main():
-    wrightFile(getInfoFromInv(extractTextFromPdf(os_dir_path())))
+    wright_file(get_info_from_inv(extract_text_from_pdf(os_dir_path())))
     remove_tmp_files()
+
 
 def os_dir_path():
     path = os.getcwd()
     files = os.listdir(path=path)
     files = ' '.join(files)
-    match = re.findall(r"\w{2}\s*\d+\s+\w+\s+\w+\.pdf",files)
+    match = re.findall(r"\w{2}\s*\d+\s+\w+\s+\w+\.pdf", files)
     file_name = match[1]
-    pdf_path = path +"\\" + file_name
+    pdf_path = path + "\\" + file_name
     return pdf_path
 
 
-def extractTextFromPdf(pdf_path):
+def extract_text_from_pdf(pdf_path):
     text = extract_text(pdf_path)
     with open("text_PL.txt", 'w+', encoding='utf-8') as file:
         file.write(text)
@@ -27,7 +28,7 @@ def extractTextFromPdf(pdf_path):
     return text
 
 
-def getInfoFromInv(text):
+def get_info_from_inv(text):
     art_list = []
     place_list = []
     gross_list = []
@@ -49,10 +50,10 @@ def getInfoFromInv(text):
     for x in match[1:]:
         tmp_list.append(x)
     match = " ".join(tmp_list)
-    match = re.findall(r"\s+\d{1,4}\s+",match)
+    match = re.findall(r"\s+\d{1,4}\s+", match)
     for x in match:
-        x = x.replace('\x0c','')
-        place_list.append(x.replace('\n',''))
+        x = x.replace('\x0c', '')
+        place_list.append(x.replace('\n', ''))
 
     match = re.findall(r"\d*[.]\d{3}\s{1}KG|\d*\s{1}KG", text)
     match = match[2:]
@@ -75,7 +76,7 @@ def getInfoFromInv(text):
     return total_list
 
 
-def wrightFile(total_list):
+def wright_file(total_list):
     book = openpyxl.Workbook()
     sheet = book.active
     for i in range(len(total_list)):
@@ -87,6 +88,7 @@ def wrightFile(total_list):
         sheet[1][x].value = headers_name_list[x]
     book.save("PL.xlsx")
     book.close()
+
 
 def remove_tmp_files():
     path = os.getcwd()
